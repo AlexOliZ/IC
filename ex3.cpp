@@ -5,20 +5,21 @@
 
 using namespace std;
 
-int main()
+int main(int argc ,char *argv[])
 {
+    if(argc < 2)
+    {
+        printf("Missing args\n");
+        return -1;
+    }
+    string filename = argv[1];
 
-    string filename;
-
-    cout << "input filename: ";
-    cin >> filename;
+    //cout << "input filename: ";
+    //cin >> filename;
 
     const char* path = "/home/zedleague/Desktop/IC/Wav files-20211025/";
     filename = path + filename;
     path = filename.c_str();
-
-    printf(path);
-    printf("\n");
 
     SF_INFO sfinfo;
     SNDFILE* snd_file;
@@ -52,7 +53,13 @@ int main()
     printf("Read %d items\n",num);
 
     /* Write the data to filedata.out. */
-    out = fopen("/home/zedleague/Desktop/IC/wave_copy.txt","w");
+    path = "/home/zedleague/Desktop/IC/Wav files-20211025/";
+    
+    filename = argv[1];
+    filename = path + filename;
+    path = filename.c_str();
+
+    out = fopen(path,"w");
     for (i = 0; i < num; i += c)
     {
         for (j = 0; j < c; ++j)

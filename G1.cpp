@@ -79,12 +79,6 @@ void copyAudio(const char *path)
     fclose(out);
 }
 
-void readJPG(string s)
-{
-    
-}
-
-
 int main()
 {
 
