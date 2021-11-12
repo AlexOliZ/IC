@@ -68,7 +68,7 @@ void copyAudio(const char *path)
     printf("Read %d items\n",num);
 
     /* Write the data to filedata.out. */
-    out = fopen("/home/zedleague/Desktop/IC/wave_copy.txt","w");
+    out = fopen("./wave_copy.txt","w");
     for (i = 0; i < num; i += c)
     {
         for (j = 0; j < c; ++j)
@@ -89,7 +89,7 @@ int main()
     
     
     readFile("./input.txt");
-    copyAudio("/home/zedleague/Desktop/IC/Wav files-20211025/sample02.wav");
+    copyAudio("./Wav files-20211025/sample02.wav");
     /*
     func(static_cast<char>(64));
     func('x');

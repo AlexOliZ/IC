@@ -17,7 +17,7 @@ int main(int argc ,char *argv[])
     //cout << "input filename: ";
     //cin >> filename;
 
-    const char* path = "/home/zedleague/Desktop/IC/Wav files-20211025/";
+    const char* path = "./Wav files-20211025/";
     filename = path + filename;
     path = filename.c_str();
 
@@ -53,9 +53,9 @@ int main(int argc ,char *argv[])
     printf("Read %d items\n",num);
 
     /* Write the data to filedata.out. */
-    path = "/home/zedleague/Desktop/IC/Wav files-20211025/";
+    path = "./";
     
-    filename = argv[1];
+    filename = argv[2];
     filename = path + filename;
     path = filename.c_str();
 
