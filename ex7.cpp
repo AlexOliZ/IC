@@ -1,12 +1,37 @@
 ////g++ ex7.cpp -o ex7 -std=c++11 `pkg-config --cflags --libs opencv`
 //https://docs.opencv.org/4.x/d8/dbc/tutorial_histogram_calculation.html?fbclid=IwAR1ZW9fgVW7tJA62hZ9byJCtnsFgTH4hN7QwpRUpUrzxaLYsST44DuA4DIg -> colour histograms
 //https://stackoverflow.com/questions/15771512/compare-histograms-of-grayscale-images-in-opencv/15773817 -> grayscale histogram
+//https://github.com/samidalati/OpenCV-Entropy/blob/master/histColor.cpp -> calculo da entropia
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgcodecs.hpp"
 #include "opencv2/imgproc.hpp"
 #include <iostream>
 using namespace std;
 using namespace cv;
+
+//calculate entropy
+float entropy(Mat seq, Size size, int index) //histogram, image size, histogram size
+{
+  int cnt = 0;
+  float entr = 0;
+  float total_size = size.height * size.width; //total size of all symbols in an image
+
+  for(int i=0;i<index;i++)
+  {
+    float sym_occur = seq.at<float>(0, i); //the number of times a sybmol has occured
+    
+    if(sym_occur>0) //log of zero goes to infinity
+      {
+        cnt++;
+        entr += (sym_occur/total_size)*(log2(total_size/sym_occur));
+      }
+  }
+  //cout<<"cnt: "<<cnt<<endl;
+  return entr;
+
+}
+
+
 int main(int argc, char** argv)
 {
     if(argc != 2){
@@ -18,7 +43,7 @@ int main(int argc, char** argv)
     filename = path + filename;
     path = filename.c_str();
 
-    Mat src = cv::imread(filename ,cv::IMREAD_COLOR);
+    Mat src = imread(filename ,IMREAD_COLOR);
 
     if(! src.data ) { //se nao encontrou a imagem
         std::cout <<  "Image not found or unable to open" << std::endl ;
@@ -43,6 +68,12 @@ int main(int argc, char** argv)
     calcHist( &bgr_planes[0], 1, 0, Mat(), b_hist, 1, &histSize, histRange, uniform, accumulate ); //b plane
     calcHist( &bgr_planes[1], 1, 0, Mat(), g_hist, 1, &histSize, histRange, uniform, accumulate ); //g plane
     calcHist( &bgr_planes[2], 1, 0, Mat(), r_hist, 1, &histSize, histRange, uniform, accumulate ); //r plane
+    
+    // calculate entropy for colour image
+    cout<<"entropy B: "<<entropy(b_hist,src.size(), histSize)<<endl;
+    cout<<"entropy G: "<<entropy(g_hist,src.size(), histSize)<<endl;
+    cout<<"entropy R: "<<entropy(r_hist,src.size(), histSize)<<endl;
+
 
     //Create an image to display the histograms
     int hist_w = 512, hist_h = 400;
@@ -56,8 +87,8 @@ int main(int argc, char** argv)
     //histograma de grayscale
 
     //procedure the calculation of grayscale histogram
-    Mat image1_gray; //imagem cinza
-    cvtColor(src, image1_gray, cv::COLOR_BGR2GRAY); //transformar a imagem a cores em preto e branco
+    Mat image1_gray; 
+    cvtColor(src, image1_gray, COLOR_BGR2GRAY); //turn the colour image into black and white
     Mat grayscale_hist; //create matrix for histogram
     Mat3b hist_image = Mat3b::zeros(histSize,histSize);//create matrix for histogram visualization
     
@@ -65,12 +96,13 @@ int main(int argc, char** argv)
     calcHist(&image1_gray, 1, 0, Mat(), grayscale_hist, 1, histSize1, histRange, true, false);
     double max_val=0;
     minMaxLoc(grayscale_hist, 0, &max_val);
+    //entropy calculation for gray image
+    cout<<"entropy grayscale: "<<entropy(grayscale_hist,image1_gray.size(), histSize)<<endl;
     
 
     //to access the bin (in this case in this 1D-Histogram)
     // we use the expression: b_hist.at<float>(i) when i = dimension
     //If it were a 2D-histogram we would use something like b_hist.at<float>( i, j )
-
     for( int i = 1; i < histSize; i++ )
     {
         //colour histograms
@@ -89,7 +121,7 @@ int main(int argc, char** argv)
               Point(i-1, hist_height),Scalar::all(255));
    
     }
-
+   
     //display our histograms and wait for the user to exit
     imshow("Source image", src );
     imshow("Colour histogram", histImage);
