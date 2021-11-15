@@ -1,7 +1,9 @@
 ////g++ ex7.cpp -o ex7 -std=c++11 `pkg-config --cflags --libs opencv`
-//https://docs.opencv.org/4.x/d8/dbc/tutorial_histogram_calculation.html?fbclid=IwAR1ZW9fgVW7tJA62hZ9byJCtnsFgTH4hN7QwpRUpUrzxaLYsST44DuA4DIg -> colour histograms
-//https://stackoverflow.com/questions/15771512/compare-histograms-of-grayscale-images-in-opencv/15773817 -> grayscale histogram
-//https://github.com/samidalati/OpenCV-Entropy/blob/master/histColor.cpp -> calculo da entropia
+//Histograms
+//https://agostinhobritojr.github.io/tutorial/pdi/ 
+//https://docs.opencv.org/4.x/d8/dbc/tutorial_histogram_calculation.html?fbclid=IwAR1ZW9fgVW7tJA62hZ9byJCtnsFgTH4hN7QwpRUpUrzxaLYsST44DuA4DIg
+//https://stackoverflow.com/questions/15771512/compare-histograms-of-grayscale-images-in-opencv/15773817 
+//https://github.com/samidalati/OpenCV-Entropy/blob/master/histColor.cpp -> entropy calculation
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgcodecs.hpp"
 #include "opencv2/imgproc.hpp"
@@ -10,23 +12,23 @@ using namespace std;
 using namespace cv;
 
 //calculate entropy
-float entropy(Mat seq, Size size, int index) //histogram, image size, histogram size
-{
+float entropy(Mat hist, Size size, int histSize) //histogram, image size, histogram size
+{  
   int cnt = 0;
   float entr = 0;
   float total_size = size.height * size.width; //total size of all symbols in an image
 
-  for(int i=0;i<index;i++)
+  for(int i=0;i<hist.rows;i++)
   {
-    float sym_occur = seq.at<float>(0, i); //the number of times a sybmol has occured
-    
+    float sym_occur = hist.at<float>(i, 0); //the number of times a sybmol has occured
+    //we want column 1 for all rows
     if(sym_occur>0) //log of zero goes to infinity
       {
         cnt++;
-        entr += (sym_occur/total_size)*(log2(total_size/sym_occur));
+        entr += (sym_occur/total_size)*(log(total_size/sym_occur)); 
       }
   }
-  //cout<<"cnt: "<<cnt<<endl;
+ 
   return entr;
 
 }
@@ -34,7 +36,7 @@ float entropy(Mat seq, Size size, int index) //histogram, image size, histogram 
 
 int main(int argc, char** argv)
 {
-    if(argc != 2){
+    if(argc < 2){
         cout << "Error: Should write <input filename>" << endl;
         return 0; 
     }
@@ -45,7 +47,7 @@ int main(int argc, char** argv)
 
     Mat src = imread(filename ,IMREAD_COLOR);
 
-    if(! src.data ) { //se nao encontrou a imagem
+    if(! src.data ) { //if you did not find the image
         std::cout <<  "Image not found or unable to open" << std::endl ;
         return -1;
     }
