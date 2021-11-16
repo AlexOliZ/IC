@@ -1,5 +1,5 @@
-// g++ ex4.cpp -o app `pkg-config --cflags --libs opencv`
-// ./app sheeesh.jpg copy.jpg
+// g++ ex4.cpp -o ex4 `pkg-config --cflags --libs opencv`
+// ./ex4 <input filename> <output filename> (por ex ./ex4 lena.ppm copy.ppm)
 
 #include <iostream>
 #include <string>
@@ -16,22 +16,22 @@ using namespace cv;
 int main(int argc,char *argv[])
 {
 
-    if(argc < 2)
+    if(argc < 3)
     {
-        printf("missing arguments");
+        cout << "Error: Should write <input filename> <output filename>" << endl;
         return EXIT_FAILURE;
     } 
 
     string input_name,output_name;
     FILE* input_f,*output_f;
-    const char* path = "/home/zedleague/Desktop/IC/";
+    const char* path = "./imagensPPM/";
 
     input_name = argv[1];
     output_name = argv[2];
 
     cout<<input_name;
 
-    input_name = "./" + input_name;
+    input_name = path + input_name;
     path = input_name.c_str();
     
     Mat input_image = imread(samples::findFile(path));
@@ -54,13 +54,9 @@ int main(int argc,char *argv[])
     }
 
     imshow("Input image",input_image);
-    waitKey(0);
-    printf("%s lol \n", path);
-
-    output_name = "./" + output_name;
-    path = output_name.c_str();
-    imwrite(path,input_image); 
+     
+    imwrite(output_name,output_image); 
 
     imshow("copy",output_image);
-    waitKey(0);
+    waitKey();
 }

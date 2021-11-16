@@ -1,9 +1,12 @@
 //g++ ex7.cpp -o ex7 -std=c++11 `pkg-config --cflags --libs opencv`
+//./ex7 <input filename> (por ex ./ex7 lena.ppm)
+
 //Histograms
 //https://agostinhobritojr.github.io/tutorial/pdi/ 
 //https://docs.opencv.org/4.x/d8/dbc/tutorial_histogram_calculation.html?fbclid=IwAR1ZW9fgVW7tJA62hZ9byJCtnsFgTH4hN7QwpRUpUrzxaLYsST44DuA4DIg
 //https://stackoverflow.com/questions/15771512/compare-histograms-of-grayscale-images-in-opencv/15773817 
 //https://github.com/samidalati/OpenCV-Entropy/blob/master/histColor.cpp -> entropy calculation
+
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgcodecs.hpp"
 #include "opencv2/imgproc.hpp"
@@ -25,7 +28,7 @@ float entropy(Mat hist, Size size, int histSize) //histogram, image size, histog
     if(sym_occur>0) //log of zero goes to infinity
       {
         cnt++;
-        entr += (sym_occur/total_size)*(log2(total_size/sym_occur)); //entropia de cada bit
+        entr += (sym_occur/total_size)*(log(total_size/sym_occur)); //entropia de cada bit
       }
   }
  
@@ -43,7 +46,7 @@ int main(int argc, char** argv)
     string filename = argv[1];
     const char* path = "./imagensPPM/";
     filename = path + filename;
-    path = filename.c_str();
+    //path = filename.c_str();
 
     Mat src = imread(filename ,IMREAD_COLOR);
 

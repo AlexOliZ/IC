@@ -1,4 +1,5 @@
-//g++ ex9.cpp -o ex9 `pkg-config --cflags --libs opencv`
+//g++ ex9.cpp -o ex9 -std=c++11 `pkg-config --cflags --libs opencv`
+//./ex9 <input filename> <output filename> (por ex ./ex9 lena.ppm  lena7.ppm)
 
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgcodecs.hpp"
