@@ -1,4 +1,4 @@
-////g++ ex7.cpp -o ex7 -std=c++11 `pkg-config --cflags --libs opencv`
+//g++ ex7.cpp -o ex7 -std=c++11 `pkg-config --cflags --libs opencv`
 //Histograms
 //https://agostinhobritojr.github.io/tutorial/pdi/ 
 //https://docs.opencv.org/4.x/d8/dbc/tutorial_histogram_calculation.html?fbclid=IwAR1ZW9fgVW7tJA62hZ9byJCtnsFgTH4hN7QwpRUpUrzxaLYsST44DuA4DIg
@@ -25,7 +25,7 @@ float entropy(Mat hist, Size size, int histSize) //histogram, image size, histog
     if(sym_occur>0) //log of zero goes to infinity
       {
         cnt++;
-        entr += (sym_occur/total_size)*(log(total_size/sym_occur)); 
+        entr += (sym_occur/total_size)*(log2(total_size/sym_occur)); //entropia de cada bit
       }
   }
  

@@ -7,7 +7,7 @@ using namespace std;
 int main(int argc,char **argv){
     char x;
 
-    if(argc != 3){
+    if(argc < 3){
         cout << "Error: Should write <input filename> <output filename>" << endl;
         return 0; 
     }
