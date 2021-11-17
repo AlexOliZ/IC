@@ -34,7 +34,7 @@ int main(int argc,char *argv[])
     input_name = path + input_name;
     path = input_name.c_str();
     
-    Mat input_image = imread(samples::findFile(path));
+    Mat input_image = imread(samples::findFile(path)); //read image
 
     if(input_image.empty())
     {
@@ -42,21 +42,22 @@ int main(int argc,char *argv[])
         return EXIT_FAILURE;
     } 
 
+    //create the matrix of the output image 
     Mat output_image = Mat::zeros(input_image.size(),input_image.type());
 
-
-    for (int i=0;i<input_image.size().height;++i)
+    //Copy pixel by pixel
+    for (int i=0;i<input_image.size().height;++i) //row
     {
-        for(int j=0;j<input_image.size().width;++j)
+        for(int j=0;j<input_image.size().width;++j) //columns
         {
             output_image.at<Vec3b>(i,j) = input_image.at<Vec3b>(i,j);
         }
     }
 
-    imshow("Input image",input_image);
+    imshow("Input image",input_image); //show image
      
-    imwrite(output_name,output_image); 
+    imwrite(output_name,output_image); //write image
 
-    imshow("copy",output_image);
+    imshow("Copied image",output_image);
     waitKey();
 }

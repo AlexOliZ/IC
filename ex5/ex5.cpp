@@ -1,3 +1,6 @@
+//g++ ex5.cpp -o ex5
+//./ex5 <nome do ficheiro a analisar> (por exemplo: ./ex5 lusiadas.epub)
+
 #include <iostream>
 #include <fstream>
 #include <map>
@@ -9,11 +12,14 @@ int main(int argc,char **argv){
     map <char, int> histogram;
     char x;
 
-    ifstream ifs("lusiadas.epub");
-    ofstream ofs("lusiadas_histogram.txt");
+    if(argc < 2)
+    {
+        cout << "Error: Should write <input filename>" << endl;
+        return EXIT_FAILURE;
+    } 
 
-    //ifstream ifs("read.txt");
-    //ofstream ofs("histogram.txt");
+    ifstream ifs(argv[1]);
+    ofstream ofs("histogram.txt");
    
     while(ifs.get(x)){
         if (histogram.find(x)!= histogram.end()){ //if the element exists

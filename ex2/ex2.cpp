@@ -1,3 +1,6 @@
+//g++ ex2.cpp -o ex2
+//./ex2 <nome ficheiro de leitura> <nome do ficheiro de escrita> (por exemplo: ./ex2 read.txt write.txt)
+
 #include <iostream>
 #include <fstream>
 #include <vector>
