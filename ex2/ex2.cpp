@@ -1,3 +1,6 @@
+//g++ ex2.cpp -o ex2
+//./ex2 <nome ficheiro de leitura> <nome do ficheiro de escrita> (por exemplo: ./ex2 read.txt write.txt)
+
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -7,7 +10,7 @@ using namespace std;
 int main(int argc,char **argv){
     char x;
 
-    if(argc != 3){
+    if(argc < 3){
         cout << "Error: Should write <input filename> <output filename>" << endl;
         return 0; 
     }

@@ -1,5 +1,5 @@
-// g++ ex4.cpp -o app `pkg-config --cflags --libs opencv`
-// ./app sheeesh.jpg copy.jpg
+// g++ ex4.cpp -o ex4 `pkg-config --cflags --libs opencv`
+// ./ex4 <input filename> <output filename> (por ex ./ex4 lena.ppm copy.ppm)
 
 #include <iostream>
 #include <string>
@@ -16,25 +16,25 @@ using namespace cv;
 int main(int argc,char *argv[])
 {
 
-    if(argc < 2)
+    if(argc < 3)
     {
-        printf("missing arguments");
+        cout << "Error: Should write <input filename> <output filename>" << endl;
         return EXIT_FAILURE;
     } 
 
     string input_name,output_name;
     FILE* input_f,*output_f;
-    const char* path = "/home/zedleague/Desktop/IC/";
+    const char* path = "./imagensPPM/";
 
     input_name = argv[1];
     output_name = argv[2];
 
     cout<<input_name;
 
-    input_name = "./" + input_name;
+    input_name = path + input_name;
     path = input_name.c_str();
     
-    Mat input_image = imread(samples::findFile(path));
+    Mat input_image = imread(samples::findFile(path)); //read image
 
     if(input_image.empty())
     {
@@ -42,25 +42,22 @@ int main(int argc,char *argv[])
         return EXIT_FAILURE;
     } 
 
+    //create the matrix of the output image 
     Mat output_image = Mat::zeros(input_image.size(),input_image.type());
 
-
-    for (int i=0;i<input_image.size().height;++i)
+    //Copy pixel by pixel
+    for (int i=0;i<input_image.size().height;++i) //row
     {
-        for(int j=0;j<input_image.size().width;++j)
+        for(int j=0;j<input_image.size().width;++j) //columns
         {
             output_image.at<Vec3b>(i,j) = input_image.at<Vec3b>(i,j);
         }
     }
 
-    imshow("Input image",input_image);
-    waitKey(0);
-    printf("%s lol \n", path);
+    imshow("Input image",input_image); //show image
+     
+    imwrite(output_name,output_image); //write image
 
-    output_name = "./" + output_name;
-    path = output_name.c_str();
-    imwrite(path,input_image); 
-
-    imshow("copy",output_image);
-    waitKey(0);
+    imshow("Copied image",output_image);
+    waitKey();
 }
