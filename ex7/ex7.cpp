@@ -17,18 +17,17 @@ using namespace cv;
 //calculate entropy
 float entropy(Mat hist, Size size, int histSize) //histogram, image size, histogram size
 {  
-  int cnt = 0;
   float entr = 0;
   float total_size = size.height * size.width; //total size of all symbols in an image
 
   for(int i=0;i<hist.rows;i++)
   {
     float sym_occur = hist.at<float>(i, 0); //the number of times a sybmol has occured
+    double prob = (static_cast<double>(sym_occur)/static_cast<double>(total_size));
     //we want column 1 for all rows
-    if(sym_occur>0) //log of zero goes to infinity
+    if(prob>0) //log of zero goes to infinity
       {
-        cnt++;
-        entr += (sym_occur/total_size)*(log(total_size/sym_occur)); //entropia de cada bit
+        entr = entr - prob*log(prob);
       }
   }
  
@@ -46,8 +45,7 @@ int main(int argc, char** argv)
     string filename = argv[1];
     const char* path = "./imagensPPM/";
     filename = path + filename;
-    //path = filename.c_str();
-
+    
     Mat src = imread(filename ,IMREAD_COLOR);
 
     if(! src.data ) { //if you did not find the image
@@ -101,12 +99,13 @@ int main(int argc, char** argv)
     calcHist(&image1_gray, 1, 0, Mat(), grayscale_hist, 1, histSize1, histRange, true, false);
     double max_val=0;
     minMaxLoc(grayscale_hist, 0, &max_val);
+    
     //entropy calculation for gray image
     cout<<"entropy grayscale: "<<entropy(grayscale_hist,image1_gray.size(), histSize)<<endl;
     
 
     //to access the bin (in this case in this 1D-Histogram)
-    // we use the expression: b_hist.at<float>(i) when i = dimension
+    //we use the expression: b_hist.at<float>(i) when i = dimension
     //If it were a 2D-histogram we would use something like b_hist.at<float>( i, j )
     for( int i = 1; i < histSize; i++ )
     {

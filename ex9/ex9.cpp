@@ -39,7 +39,7 @@ int main(int argc, char** argv)
         for(int j=0; j<image.cols; j++){
             //get pixel
             Vec3b & val = Final_image.at<Vec3b>(i,j);
-            //color
+            //color-> reduce colour bits
             val[0] = (((pixelPtr[i*image.cols*cn + j*cn + 0])>>7)<<7);     //B
             val[1] = (((pixelPtr[i*image.cols*cn + j*cn + 1])>>7)<<7);     //G
             val[2] = (((pixelPtr[i*image.cols*cn + j*cn + 2])>>7)<<7);     //R
