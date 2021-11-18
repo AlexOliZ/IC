@@ -1,4 +1,5 @@
-//https://github.com/lava/matplotlib-cpp
+// g++ ex6.cpp -lsndfile
+// ./a.out sample01.wav
 // #include "gnuplot.h"
 #include <iostream>
 #include <string>
@@ -15,15 +16,12 @@ using namespace std;
 
 int main(int argc ,char *argv[])
 {
-    if(argc < 2)
+    if(argc < 1)
     {
         printf("Missing args\n");
         return -1;
     }
     string filename = argv[1];
-
-    //cout << "input filename: ";
-    //cin >> filename;
 
     const char* path = "./Wav files-20211025/";
     filename = path + filename;
@@ -31,7 +29,6 @@ int main(int argc ,char *argv[])
 
     SF_INFO sfinfo;
     SNDFILE* snd_file;
-
     FILE *out;
 
     sfinfo.format = 0;
@@ -42,20 +39,20 @@ int main(int argc ,char *argv[])
         printf("Failed to open the file\n");
     }    
 
-    int num_channels, num, num_items, *buf, f, sr,c, i , j;
+    int num_channels, num, num_items, f, sr,c, i , j;
 
+    double* buf;
     f = sfinfo.frames;
     sr = sfinfo.samplerate;
     c = sfinfo.channels;
-
     num_items = f*c;
 
     printf("frames=%d\n",f);
     printf("samplerate=%d\n",sr);
     printf("channels=%d\n",c);
-
-    buf = (int *) malloc(num_items*sizeof(int));
-    num = sf_read_int(snd_file,buf,num_items);
+    
+    buf = (double *) malloc(num_items*sizeof(double));
+    num = sf_read_double(snd_file,buf,num_items);
     
     sf_close(snd_file);
     printf("Read %d items\n",num);
@@ -63,118 +60,99 @@ int main(int argc ,char *argv[])
     /* Write the data to filedata.out. */
     path = "./";
     
-    filename = argv[2];
-    filename = path + filename;
-    path = filename.c_str();
-    map <int, int> histogram_c1;
-    map <int, int> histogram;
-    map <int, int> histogram_c2;
-    map <int, int> histogram_avg;
+    map <double, int> histogram_c1;
+    map <double, int> histogram;
+    map <double, int> histogram_c2;
+    map <double, int> histogram_avg;
 
+    int precision = 1;
+    
     for (i = 0; i < num; i += c)
     {
         
-        if (histogram.find(buf[i]/100000)!= histogram.end()){ //if the element exists
-            histogram[buf[i]/100000]+=1; //increase the number of elements
+        if (histogram.find(buf[i]*precision)!= histogram.end()){ //if the element exists
+            histogram[(buf[i]*precision)]++; //increase the number of elements
         }else{
-            histogram[buf[i]/100000]+=1;
-            //printf("key=%d\n",buf[i+j]);
+            histogram[(buf[i]*precision)]=1;
         }
 
-        if (histogram.find(buf[i+1]/100000)!= histogram.end()){ //if the element exists
-            histogram[buf[i+1]/100000]+=1; //increase the number of elements
+        if (histogram.find((buf[i+1]*precision))!= histogram.end()){ //if the element exists
+            histogram[(buf[i+1]*precision)]++; //increase the number of elements
         }else{
-            histogram[buf[i+1]/100000]+=1;
-            //printf("key=%d\n",buf[i+j]);
+            histogram[(buf[i+1]*precision)]=1;
         }
 
-        if (histogram_c1.find(buf[i]/100000)!= histogram_c1.end()){ //if the element exists
-            histogram_c1[buf[i]/100000]+=1; //increase the number of elements
+        if (histogram_c1.find((buf[i]*precision))!= histogram_c1.end()){ //if the element exists
+            histogram_c1[(buf[i]*precision)]++; //increase the number of elements
             
         }else{
-            histogram_c1[buf[i]/100000]=1; //add an element
-            //printf("key=%d\n",buf[i+j]);
+            histogram_c1[(buf[i]*precision)]=1; //add an element
         }
 
-        if (histogram_c2.find(buf[i+1]/100000)!= histogram_c2.end()){ //if the element exists
-            histogram_c2[buf[i+1]/100000]++; //increase the number of elements
+        if (histogram_c2.find((buf[i+1]*precision))!= histogram_c2.end()){ //if the element exists
+            histogram_c2[(buf[i+1]*precision)]++; //increase the number of elements
         }else{
-            histogram_c2[buf[i+1]/100000]=1; //add an element
-            //printf("key=%d\n",buf[i+j]);
+            histogram_c2[(buf[i+1]*precision)]=1; //add an element
         }
 
-        if (histogram_avg.find((buf[i]+buf[i+1])/200000)!= histogram_avg.end()){ //if the element exists
-            histogram_avg[(buf[i]+buf[i+1])/200000]++; //increase the number of elements
+        if (histogram_avg.find((((buf[i]+buf[i+1])*precision)/2))!= histogram_avg.end()){ //if the element exists
+            histogram_avg[((buf[i]+buf[i+1])*precision)/2]++; //increase the number of elements
         }else{
-            histogram_avg[(buf[i]+buf[i+1])/200000]=1; //add an element
-            //printf("key=%d\n",buf[i+j]);
+            histogram_avg[((buf[i]+buf[i+1])*precision)/2]=1; //add an element
         }
+        
     }
     int key;
     int value;
-    // entropy -> para cada simbolo ak sum[(log P(ak))*P(ak)]
-    // P(ak) = val/map.size()
     double entropy_c1 = 0, entropy_c2 = 0, entropy = 0, entropy_avg=0 ,pak = 0;
-    //std::vector<int> x_c1(n),y_c1(n);
+    
     i=0;
     
-    int len = num_items/100000;
-    int len_channel = num_items/200000;
+    int len = num_items;
+    int len_channel = num_items/2;
     
     out = fopen("./histogram_c1.txt","w");
-    for(std::map<int,int>::iterator it = histogram_c1.begin(); it != histogram_c1.end(); ++it) {
-        //x_c1.at(i) = it->first;   //key
-        //y_c1.at(i) = it->second; // val
-        //i++;
+    for(std::map<double,int>::iterator it = histogram_c1.begin(); it != histogram_c1.end(); ++it) {
         // entropy c1
-        fprintf(out,"%d %d\n",it->first,it->second);
-        pak = it->second/len_channel;
-        printf("%d,%f\n",it->first,pak);
+        fprintf(out,"%f %d\n",it->first,it->second);
+        pak = (double)it->second/len_channel;
         if(pak > 0)
-            entropy_c1 -= (log(pak)/log(histogram_c1.size())) *pak;
+            entropy_c1 -= (log(pak)/log(16)) *pak;
     }
+    fclose(out);
     
 
-    //plt::figure_size(1200, 780);
-    //plt::plot(x_c1, y_c1);
-    //plt::title("Sample figure");
-    //std::vector<int> x_c2(n),y_c2(n);
     out = fopen("./histogram_c2.txt","w");
-    for(std::map<int,int>::iterator it = histogram_c2.begin(); it != histogram_c2.end(); ++it) {
-        //x_c2.at(i) = it->first;   //key
-        //y_c2.at(i) = it->second; // val
+    for(std::map<double,int>::iterator it = histogram_c2.begin(); it != histogram_c2.end(); ++it) {
         // entropy c2
-        fprintf(out,"%d %d\n",it->first,it->second);
-        pak = it->second/len_channel;
+        fprintf(out,"%f %d\n",it->first,it->second);
+        pak = (double)it->second/len_channel;
         if(pak > 0)
-            entropy_c2 -= (log(pak)/log(histogram_c2.size())) *pak;
+            entropy_c2 -= (log(pak)/log(16)) *pak;
     }
+    fclose(out);
 
     out = fopen("./histogram.txt","w");
-    for(std::map<int,int>::iterator it = histogram.begin(); it != histogram.end(); ++it) {
-        //x_c2.at(i) = it->first;   //key
-        //y_c2.at(i) = it->second; // val
+    for(std::map<double,int>::iterator it = histogram.begin(); it != histogram.end(); ++it) {
         // entropy avg
-        fprintf(out,"%d %d\n",it->first,it->second);
-        pak = it->second/len;
+        fprintf(out,"%f %d\n",it->first,it->second);
+        pak = (double)it->second/len;
         if(pak > 0)
-            entropy -= (log(pak)/log(histogram.size())) *pak;
+            entropy -= (log(pak)/log(16)) *pak;
     }
+    fclose(out);
 
     out = fopen("./histogram_avg.txt","w");
-    for(std::map<int,int>::iterator it = histogram_avg.begin(); it != histogram_avg.end(); ++it) {
-        //x_c2.at(i) = it->first;   //key
-        //y_c2.at(i) = it->second; // val
+    for(std::map<double,int>::iterator it = histogram_avg.begin(); it != histogram_avg.end(); ++it) {
         // entropy avg
-        fprintf(out,"%d %d\n",it->first,it->second);
-        pak = it->second/len_channel;
+        fprintf(out,"%f %d\n",it->first,it->second);
+        pak = (double)it->second/len_channel;
         if(pak > 0)
-            entropy_avg -= (log(pak)/log(histogram_avg.size())) *pak;
+            entropy_avg -= (log(pak)/log(16)) *pak;
     }
-
+    fclose(out);    
     printf("entropy c1 -> %f\n",entropy_c1);
     printf("entropy c2 -> %f\n",entropy_c2);
     printf("entropy avg -> %f\n",entropy_avg);
     printf("entropy -> %f\n",entropy);
-    //plot::plot(x,y,"r-",x,[](int d) { return d; }, "k-");
 }
