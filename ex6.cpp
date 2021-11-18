@@ -65,40 +65,40 @@ int main(int argc ,char *argv[])
     map <double, int> histogram_c2;
     map <double, int> histogram_avg;
 
-    int precision = 1;
+    //int precision = 1;
     
     for (i = 0; i < num; i += c)
     {
         
-        if (histogram.find(buf[i]*precision)!= histogram.end()){ //if the element exists
-            histogram[(buf[i]*precision)]++; //increase the number of elements
+        if (histogram.find(buf[i])!= histogram.end()){ //if the element exists
+            histogram[(buf[i])]++; //increase the number of elements
         }else{
-            histogram[(buf[i]*precision)]=1;
+            histogram[(buf[i])]=1;
         }
 
-        if (histogram.find((buf[i+1]*precision))!= histogram.end()){ //if the element exists
-            histogram[(buf[i+1]*precision)]++; //increase the number of elements
+        if (histogram.find((buf[i+1]))!= histogram.end()){ //if the element exists
+            histogram[(buf[i+1])]++; //increase the number of elements
         }else{
-            histogram[(buf[i+1]*precision)]=1;
+            histogram[(buf[i+1])]=1;
         }
 
-        if (histogram_c1.find((buf[i]*precision))!= histogram_c1.end()){ //if the element exists
-            histogram_c1[(buf[i]*precision)]++; //increase the number of elements
+        if (histogram_c1.find((buf[i]))!= histogram_c1.end()){ //if the element exists
+            histogram_c1[(buf[i])]++; //increase the number of elements
             
         }else{
-            histogram_c1[(buf[i]*precision)]=1; //add an element
+            histogram_c1[(buf[i])]=1; //add an element
         }
 
-        if (histogram_c2.find((buf[i+1]*precision))!= histogram_c2.end()){ //if the element exists
-            histogram_c2[(buf[i+1]*precision)]++; //increase the number of elements
+        if (histogram_c2.find((buf[i+1]))!= histogram_c2.end()){ //if the element exists
+            histogram_c2[(buf[i+1])]++; //increase the number of elements
         }else{
-            histogram_c2[(buf[i+1]*precision)]=1; //add an element
+            histogram_c2[(buf[i+1])]=1; //add an element
         }
 
-        if (histogram_avg.find((((buf[i]+buf[i+1])*precision)/2))!= histogram_avg.end()){ //if the element exists
-            histogram_avg[((buf[i]+buf[i+1])*precision)/2]++; //increase the number of elements
+        if (histogram_avg.find((((buf[i]+buf[i+1]))/2))!= histogram_avg.end()){ //if the element exists
+            histogram_avg[((buf[i]+buf[i+1]))/2]++; //increase the number of elements
         }else{
-            histogram_avg[((buf[i]+buf[i+1])*precision)/2]=1; //add an element
+            histogram_avg[((buf[i]+buf[i+1]))/2]=1; //add an element
         }
         
     }
