@@ -17,8 +17,8 @@ using namespace std;
 
 int main(int argc ,char *argv[])
 {
-    if(argc != 2){
-        std::cout << "USE IS: ./ex8 <samplename.wav>"<< std::endl;
+    if(argc < 3){
+        std::cout << "USE IS: ./ex10 <samplename.wav> n_bits"<< std::endl;
         return 1;
     }
     char *inFileName = (char*)malloc(sizeof(char*));
@@ -46,14 +46,16 @@ int main(int argc ,char *argv[])
     buf = (double *) malloc(num_items*sizeof(double));
     num = sf_read_double(inFile,buf,num_items);
     buf_r = (double *) malloc(num_items*sizeof(double));
-    double max_abs_error = 0;
+    double max_abs_error = -100000;
     //Δ=|t−s|/(λ−1) 
     //4bits => 2 / (2⁴-1) = 0,1333
+    int n_bits = atoi(argv[2]);
+    double delta = 2/pow(2,n_bits);
     for (int i = 0; i < num; i += channels)
     {
         for (int j = 0; j < channels; ++j){
-            buf_r[i+j] = 0.1333*floor(buf[i+j]/0.1333+0.5);
-            sum += pow(buf_r[i+j],2);
+            buf_r[i+j] = delta*floor(buf[i+j]/delta+0.5);
+            sum += pow(buf[i+j],2);
             sum_r += pow(buf[i+j]-buf_r[i+j],2);
             if(pow(buf[i+j]-buf_r[i+j],2) > max_abs_error)
                 max_abs_error = pow(buf[i+j]-buf_r[i+j],2);
